@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Ticket Booking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e8f0fe;
+        }
+
+        header {
+            background: #1a1a4d;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        main {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 {
+            color: #1a1a4d;
+        }
+
+        #booking-form {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            text-align: left;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #1a1a4d;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0d0d3a;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background: #1a1a4d;
+            color: #ffffff;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .summary {
+            margin-top: 20px;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: left;
+        }
+
+        .ticket-item {
+            margin: 10px 0;
+        }
+
+        .edit-button {
+            margin-top: 10px;
+            background-color: #28a745;
+        }
+
+        .delete-button {
+            margin-top: 10px;
+            background-color: #dc3545;
+        }
+
+        .update-button {
+            background-color: #007bff;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Train Ticket Booking</h1>
+    </header>
+
+    <main>
+        <section id="booking-form">
+            <h2>Book a Ticket</h2>
+            <form id="ticketForm">
+                <label for="from">From:</label>
+                <input type="text" id="from" name="from" required>
+
+                <label for="to">To:</label>
+                <input type="text" id="to" name="to" required>
+
+                <label for="from-date">From Date:</label>
+                <input type="date" id="from-date" name="from-date" required>
+
+                <label for="to-date">To Date:</label>
+                <input type="date" id="to-date" name="to-date" required>
+
+                <label for="passengers">Number of Passengers:</label>
+                <input type="number" id="passengers" name="passengers" min="1" required>
+
+                <button type="submit">Book Ticket</button>
+            </form>
+        </section>
+
+        <section class="summary">
+            <h2>Booking Summary</h2>
+            <div id="summaryDetails"></div>
+            <div id="editSection" class="hidden">
+                <h3>Edit Ticket</h3>
+                <form id="editForm">
+                    <label for="edit-from">From:</label>
+                    <input type="text" id="edit-from" name="edit-from" required>
+
+                    <label for="edit-to">To:</label>
+                    <input type="text" id="edit-to" name="edit-to" required>
+
+                    <label for="edit-from-date">From Date:</label>
+                    <input type="date" id="edit-from-date" name="edit-from-date" required>
+
+                    <label for="edit-to-date">To Date:</label>
+                    <input type="date" id="edit-to-date" name="edit-to-date" required>
+
+                    <label for="edit-passengers">Number of Passengers:</label>
+                    <input type="number" id="edit-passengers" name="edit-passengers" min="1" required>
+
+                    <button type="submit">Update Ticket</button>
+                </form>
+            </div>
+            <button id="deleteTicket" class="delete-button hidden" onclick="deleteTicket()">Delete Ticket</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Train Ticket Booking. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById('ticketForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const ticketDetails = {
+                from: document.getElementById('from').value,
+                to: document.getElementById('to').value,
+                fromDate: document.getElementById('from-date').value,
+                toDate: document.getElementById('to-date').value,
+                passengers: document.getElementById('passengers').value
+            };
+
+            localStorage.setItem('ticketDetails', JSON.stringify(ticketDetails));
+
+            displaySummary();
+            alert('Ticket booked successfully!');
+        });
+
+        function displaySummary() {
+            const ticketDetails = JSON.parse(localStorage.getItem('ticketDetails'));
+            const summaryDetails = document.getElementById('summaryDetails');
+            summaryDetails.innerHTML = '';
+
+            if (ticketDetails) {
+                const summaryHTML = `
+                    <div class="ticket-item"><strong>From:</strong> <span id="summary-from">${ticketDetails.from}</span></div>
+                    <div class="ticket-item"><strong>To:</strong> <span id="summary-to">${ticketDetails.to}</span></div>
+                    <div class="ticket-item"><strong>From Date:</strong> <span id="summary-from-date">${ticketDetails.fromDate}</span></div>
+                    <div class="ticket-item"><strong>To Date:</strong> <span id="summary-to-date">${ticketDetails.toDate}</span></div>
+                    <div class="ticket-item"><strong>Passengers:</strong> <span id="summary-passengers">${ticketDetails.passengers}</span></div>
+                    <button class="edit-button" onclick="enableEdit()">Edit Ticket</button>
+                `;
+                summaryDetails.innerHTML = summaryHTML;
+                document.getElementById('deleteTicket').classList.remove('hidden');
+            }
+        }
+
+        function enableEdit() {
+            const ticketDetails = JSON.parse(localStorage.getItem('ticketDetails'));
+
+            document.getElementById('edit-from').value = ticketDetails.from;
+            document.getElementById('edit-to').value = ticketDetails.to;
+            document.getElementById('edit-from-date').value = ticketDetails.fromDate;
+            document.getElementById('edit-to-date').value = ticketDetails.toDate;
+            document.getElementById('edit-passengers').value = ticketDetails.passengers;
+
+            document.getElementById('editSection').classList.remove('hidden');
+        }
+
+        document.getElementById('editForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const updatedDetails = {
+                from: document.getElementById('edit-from').value,
+                to: document.getElementById('edit-to').value,
+                fromDate: document.getElementById('edit-from-date').value,
+                toDate: document.getElementById('edit-to-date').value,
+                passengers: document.getElementById('edit-passengers').value
+            };
+
+            localStorage.setItem('ticketDetails', JSON.stringify(updatedDetails));
+
+            displaySummary();
+            alert('Ticket updated successfully!');
+
+            document.getElementById('editSection').classList.add('hidden');
+        });
+
+        function deleteTicket() {
+            localStorage.removeItem('ticketDetails');
+            document.getElementById('summaryDetails').innerHTML = '';
+            document.getElementById('deleteTicket').classList.add('hidden');
+            alert('Ticket deleted successfully!');
+        }
+    </script>
+</body>
+</html>
